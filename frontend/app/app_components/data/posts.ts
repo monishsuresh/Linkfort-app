@@ -1,0 +1,68 @@
+import { Post } from "../models/Post";
+
+export const samplePosts: Post[] = [
+    {
+        id: "1",
+        name: "User1",
+        user: 'User 1',
+        type: "offer",
+        details: 'Offering extra vegetables from my garden',
+        location: { latitude: 51.502, longitude: 6.56 },
+    },
+    {
+        id: "2",
+        name: "User2",
+        user: 'User 1',
+        type: "request",
+        details: 'Looking for someone to help move furniture this weekend',
+        location: { latitude: 51.506, longitude: 6.57 },
+    },
+    {
+        id: "3",
+        name: "Old Books Giveaway",
+        user: 'User 1',
+        type: "offer",
+        details: "Giving away a small collection of fiction books.",
+        location: { latitude: 51.512, longitude: 6.5436 },
+    },
+    {
+        id: "4",
+        name: "Looking for Gardening Help",
+        user: 'User 1',
+        type: "request",
+        details: "Need assistance with planting flowers in my backyard.",
+        location: { latitude: 51.501, longitude: 6.5302 },
+    },
+    {
+        id: "5",
+        name: "Spare Chair",
+        user: 'User 1',
+        type: "offer",
+        details: "One office chair available for free pickup.",
+        location: { latitude: 51.5085, longitude: 6.5708 },
+    },
+    {
+        id: "6",
+        name: "Need a Dog Walker",
+        user: 'User 1',
+        type: "request",
+        details: "Looking for someone to walk my dog in the evenings.",
+        location: { latitude: 51.5008, longitude: 6.5904 },
+    },
+    {
+        id: "7",
+        name: "Free Houseplants",
+        user: 'User 1',
+        type: "offer",
+        details: "Two potted plants available for pickup.",
+        location: { latitude: 51.5001, longitude: 6.5103 },
+    },
+    {
+        id: "8",
+        name: "Help Painting a Room",
+        user: 'User 1',
+        type: "request",
+        details: "Need a hand painting a small bedroom this weekend.",
+        location: { latitude: 51.502, longitude: 6.5509 },
+    },
+];

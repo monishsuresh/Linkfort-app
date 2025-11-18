@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import ListScreen from '../app_components/ListScreen';
 import MapScreen from '../app_components/MapScreen';
 
@@ -9,14 +9,14 @@ export default function Index() {
   return (
     <View style={styles.container}>
       {/* Screen content */}
-      {activeScreen === 'map' && <MapScreen />}
-      {activeScreen === 'list' && <ListScreen />}
+      {activeScreen === 'map' && <MapScreen setActiveScreen={setActiveScreen} />}
+      {activeScreen === 'list' && <ListScreen setActiveScreen={setActiveScreen} />}
 
       {/* Always visible overlay buttons */}
-      <View style={styles.overlay}>
+      {/* <View style={styles.overlay}>
         <Button title="Map View" onPress={() => setActiveScreen('map')} />
         <Button title="List View" onPress={() => setActiveScreen('list')} />
-      </View>
+      </View> */}
     </View>
   );
 }

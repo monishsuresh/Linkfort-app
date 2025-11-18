@@ -1,12 +1,20 @@
 import * as Location from 'expo-location';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Alert, Button, StyleSheet, View } from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
+import { samplePosts } from '../app_components/data/posts';
+import { Post } from '../app_components/models/Post';
 
-const MapScreen: React.FC = () => {
+interface MapScreenProps {
+    setActiveScreen: React.Dispatch<React.SetStateAction<'map' | 'list'>>;
+}
+
+const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const [region, setRegion] = useState<Region | null>(null);
     const [loading, setLoading] = useState(true);
+
+    const [posts, setPosts] = useState<Post[]>(samplePosts);
 
     useEffect(() => {
         (async () => {
@@ -55,8 +63,8 @@ const MapScreen: React.FC = () => {
             <MapView
                 style={styles.map}
                 region={region}
-                showsUserLocation
-                followsUserLocation
+            //  showsUserLocation
+            //followsUserLocation
             >
                 {location && (
                     <Marker
@@ -67,7 +75,28 @@ const MapScreen: React.FC = () => {
                         title="You are here"
                     />
                 )}
+
+                {posts.map((post) => (
+                    <Marker
+                        key={post.id}
+                        coordinate={{
+                            latitude: post.location.latitude,
+                            longitude: post.location.longitude,
+                        }}
+                        title={post.type}
+                        description={post.name}
+                        anchor={{ x: 0.5, y: 0.5 }} // center the marker
+                        image={
+                            post.type === "offer"
+                                ? require("../../assets/images/marker blue.png")
+                                : require("../../assets/images/marker green.png")
+                        }
+                    />
+                ))}
             </MapView>
+            <View style={styles.buttonContainer}>
+                <Button title="List View" onPress={() => setActiveScreen("list")} />
+            </View>
         </View>
     );
 };
@@ -81,5 +110,12 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    buttonContainer: {
+        position: "absolute",
+        bottom: 20,
+        left: 0,
+        right: 0,
+        alignItems: "center",
     },
 });
