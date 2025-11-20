@@ -11,6 +11,7 @@ export default function TabLayout() {
   const isDark = colorScheme === 'dark';
 
   return (
+
     <Tabs
       screenOptions={{
         headerShown: false,

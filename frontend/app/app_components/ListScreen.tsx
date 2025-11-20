@@ -43,14 +43,14 @@ const ListScreen: React.FC<ListScreenProps> = ({ setActiveScreen }) => {
             {/* Search & Filter header */}
             <View style={styles.banner}>
                 <TouchableOpacity style={styles.bannerButton}>
-                    <Text>Search</Text>
+                    <Text style={{ color: "white" }}>Search</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={styles.bannerButton}
                     onPress={() => setFilterVisible(!filterVisible)}
                 >
-                    <Text>Filter</Text>
+                    <Text style={{ color: "white" }}>Filter</Text>
                 </TouchableOpacity>
             </View>
 
