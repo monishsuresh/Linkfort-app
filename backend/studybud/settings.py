@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'drf_spectacular',   # OpenAPI generator
     'drf_spectacular_sidecar',  # Swagger UI and Redoc assets
     "corsheaders",  # For handling CORS 
+    'django_filters', # For filtering support 
+
+
 
 
 ]

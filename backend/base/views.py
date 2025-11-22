@@ -3,30 +3,43 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions
 from rest_framework.response import Response
+from rest_framework import viewsets, permissions, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import ChangePasswordSerializer
 from .serializers import RegisterSerializer
 from rest_framework.exceptions import ValidationError
 from rest_framework import viewsets
-from .models import Post, Profile, Message, TrustBadge
-from .serializers import PostSerializer, ProfileSerializer, MessageSerializer, TrustBadgeSerializer
-
-def home(request):
-    return HttpResponse("Hello, StudyBud!")
-
-def room(request):
-    return HttpResponse("This is a room page.")
-
+from .models import Post, Profile, Message, Rating, Exchange
+from .serializers import PostSerializer, ProfileSerializer, MessageSerializer, RatingSerializer, ExchangeSerializer
+from django.db.models import Q
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all().order_by('-created_at')
+    # queryset defines the default set of posts returned
+    queryset = Post.objects.all().order_by("-created_at")
+    # serializer_class specifies which serializer to use
     serializer_class = PostSerializer
-class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
+    # permission_classes restrict access (authenticated users can create, anyone can read)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    # filter_backends allow filtering and searching
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    # filterset_fields define which fields can be filtered via query params
+    filterset_fields = ["post_type", "market_type", "status", "location_area"]
+    # search_fields allow text search
+    search_fields = ["title", "description"]
+    # ordering_fields allow sorting
+    ordering_fields = ["created_at", "price", "exchange_count"]
+
+    # perform_create ensures created_by is set to the current user's profile
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(created_by=self.request.user.profile)
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.select_related("user").all()
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.AllowAny]
+
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -37,19 +50,15 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer.save(sender=self.request.user.profile)
 
 
-class TrustBadgeViewSet(viewsets.ModelViewSet):
-    queryset = TrustBadge.objects.all()
-    serializer_class = TrustBadgeSerializer
+class RatingViewSet(viewsets.ModelViewSet):
+    queryset = Rating.objects.all().order_by("-created_at")
+    serializer_class = RatingSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        giver = self.request.user.profile
-        receiver = serializer.validated_data['receiver']
+        # rater is always the logged-in user
+        serializer.save(rater=self.request.user.profile)
 
-        
-        if TrustBadge.objects.filter(giver=giver, receiver=receiver).exists():
-            raise ValidationError("already done.")
-
-        serializer.save(giver=giver)
 
 
 class RegisterView(generics.CreateAPIView):
@@ -78,3 +87,10 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response({"status": "password changed"}, status=200)
 
         return Response(serializer.errors, status=400)
+class ExchangeViewSet(viewsets.ModelViewSet):
+    queryset = Exchange.objects.all()
+    serializer_class = ExchangeSerializer
+
+    def get_queryset(self):
+        user = self.request.user.profile
+        return Exchange.objects.filter(Q(initiator=user) | Q(receiver=user))
