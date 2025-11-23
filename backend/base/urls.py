@@ -22,8 +22,7 @@ router.register(r'exchanges', ExchangeViewSet)
 urlpatterns = [
     path('', include(router.urls)),     # CRUD endpoints from ViewSets
     path("register/", RegisterView.as_view(), name="register"),         
-    path("change-password/", ChangePasswordView.as_view(), name="change-password"),         
-    path('login/', obtain_auth_token, name='api_login'),  # DRF token login 
+    path("change-password/", ChangePasswordView.as_view(), name="change-password"),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),   
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # JWT (SimpleJWT)  endpoints
     

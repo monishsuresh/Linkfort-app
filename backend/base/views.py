@@ -48,6 +48,12 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user.profile)
+    def perform_destroy(self, instance):
+        # Only allow sender to delete their own messages
+        if instance.sender != self.request.user.profile:
+            raise PermissionDenied("You can only delete your own messages.")
+        instance.delete()
+
 
 
 class RatingViewSet(viewsets.ModelViewSet):
