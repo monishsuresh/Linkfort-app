@@ -12,42 +12,57 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = [
             "id",
-            "title",            # Item title
+            "title",            # Title of the post
             "description",      # Detailed description
             "location_area",    # Area name (string)
             "exact_lat",        # Optional latitude
             "exact_lng",        # Optional longitude
-            "post_type",        # Type of post (item, event, borrow, request)
-            "market_type",      # Rent or Sale (only for item)
-            "price",            # Price of item
+            "post_type",        # Type of post (offer, borrow, skillshare, event)
+            "market_type",      # Rent or Sale (only for offer)
+            "price",            # Price of item (only for offer)
             "currency",         # Currency code
             "status",           # Availability status
             "exchange_count",   # Number of exchanges
-            "event_start_at",   # Start time for events
+            "event_start_at",   # Start time for events or skill sessions
+            "event_end_at",     # End time for events
             "created_by",       # Profile who created the post
             "created_at",       # Timestamp of creation
         ]
         # These fields are automatically set by backend, not editable by user
         read_only_fields = ["id", "created_by", "created_at", "exchange_count"]
 
-    # validate method enforces rules depending on post_type and market_type
+    # validate method enforces rules depending on post_type
     def validate(self, data):
-        # If post_type is event, market_type must be null and event_start_at required
-        if data.get("post_type") == "event":
+        post_type = data.get("post_type")
+
+        # Offer validation
+        if post_type == "offer":
+            if not data.get("market_type"):
+                raise serializers.ValidationError("Offer posts must have market_type (rent or sale).")
+            if not data.get("price"):
+                raise serializers.ValidationError("Offer posts must include a price.")
+
+        # Borrow validation
+        elif post_type == "borrow":
+            if not data.get("status"):
+                raise serializers.ValidationError("Borrow posts must include a status.")
+
+        # Skill Share validation
+        elif post_type == "skillshare":
+            if not data.get("description"):
+                raise serializers.ValidationError("Skill Share posts must include a description.")
+            # event_start_at is optional, but can be used for scheduling sessions
+
+        # Event validation
+        elif post_type == "event":
             if data.get("market_type"):
                 raise serializers.ValidationError("Event posts cannot have market_type.")
+            if data.get("price"):
+                raise serializers.ValidationError("Event posts cannot include a price.")
             if not data.get("event_start_at"):
                 raise serializers.ValidationError("Event posts must have a start time.")
 
-        # If post_type is item, market_type and price are required
-        if data.get("post_type") == "item":
-            if not data.get("market_type"):
-                raise serializers.ValidationError("Item posts must have market_type (rent or sale).")
-            if not data.get("price"):
-                raise serializers.ValidationError("Item posts must include a price.")
-
         return data
-
 
 
 
@@ -91,19 +106,19 @@ class RatingSerializer(serializers.ModelSerializer):
         rater = self.context["request"].user.profile
         ratee = data.get("ratee")
 
-        # Self-rating engeli
+        # block self-rating
         if rater == ratee:
             raise serializers.ValidationError("You cannot rate yourself.")
 
-        # Duplicate rating engeli
+        # Duplicate  rating check
         if Rating.objects.filter(rater=rater, ratee=ratee).exists():
             raise serializers.ValidationError("You have already rated this user.")
 
-        # Score aralığı kontrolü
+        # Score bounds check
         if data.get("score") < 1 or data.get("score") > 5:
             raise serializers.ValidationError("Score must be between 1 and 5.")
 
-        # Mesajlaşma + Diyalog şartı
+        # Mutual dialogue check: at least 2 messages each way
         sent_count = Message.objects.filter(sender=rater, receiver=ratee).count()
         received_count = Message.objects.filter(sender=ratee, receiver=rater).count()
 

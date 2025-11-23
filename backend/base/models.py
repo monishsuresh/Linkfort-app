@@ -28,46 +28,57 @@ class Profile(models.Model):
 
 class Post(models.Model):
     POST_TYPE_CHOICES = [
-        ("item", "Item"),       # eşya paylaşımı
-        ("event", "Event"),     # etkinlik duyurusu
-        ("borrow", "Borrow"),   # ödünç verilecek eşya
-        ("request", "Request"), # ihtiyaç duyulan eşya
+        ("offer", "Offer"),        # Offer type: selling or renting items
+        ("borrow", "Borrow"),      # Borrow type: requesting to borrow items
+        ("skillshare", "Skill Share"),  # Skill Share type: sharing skills or lessons
+        ("event", "Event"),        # Event type: local events like workshops or meetups
     ]
+
     MARKET_TYPE_CHOICES = [
-        ("rent", "Rent"),
-        ("sale", "Sale"),
+        ("rent", "Rent"),          # Market type: renting an item
+        ("sale", "Sale"),          # Market type: selling an item
     ]
+
     STATUS_CHOICES = [
-        ("available", "Available"),
-        ("reserved", "Reserved"),
-        ("borrowed", "Borrowed"),
-        ("sold", "Sold"),
-        ("inactive", "Inactive"),
+        ("available", "Available"),  # Item is available
+        ("reserved", "Reserved"),    # Item is reserved
+        ("borrowed", "Borrowed"),    # Item is borrowed
+        ("sold", "Sold"),            # Item is sold
+        ("inactive", "Inactive"),    # Item is inactive
     ]
 
-    title = models.CharField(max_length=100)  # Item title
+    # Common fields for all post types
+    title = models.CharField(max_length=100)  # Title of the post
     description = models.TextField(max_length=500)  # Detailed description
-    location_area = models.CharField(max_length=100)  # Area name (e.g. district or neighborhood)
-
+    location_area = models.CharField(max_length=100)  # Area name (district or neighborhood)
     exact_lat = models.FloatField(null=True, blank=True)  # Optional latitude
     exact_lng = models.FloatField(null=True, blank=True)  # Optional longitude
 
-    post_type = models.CharField(max_length=10, choices=POST_TYPE_CHOICES)  # Type of post
-    market_type = models.CharField(max_length=10, choices=MARKET_TYPE_CHOICES, null=True, blank=True)  # Rent or Sale
+    # Type of post (Offer, Borrow, Skill Share, Event)
+    post_type = models.CharField(max_length=15, choices=POST_TYPE_CHOICES)
 
+    # Offer-specific fields
+    market_type = models.CharField(max_length=10, choices=MARKET_TYPE_CHOICES, null=True, blank=True)  # Rent or Sale
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Price of item
     currency = models.CharField(max_length=3, default="EUR")  # Currency code
 
+    # Status field for Offer and Borrow
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="available")  # Availability status
-    exchange_count = models.PositiveIntegerField(default=0)  # Number of exchanges
 
-    event_start_at = models.DateTimeField(null=True, blank=True)  # Start time for events only
+    # Feedback system: number of successful exchanges
+    exchange_count = models.PositiveIntegerField(default=0)
 
+    # Event-specific fields
+    event_start_at = models.DateTimeField(null=True, blank=True)  # Start time for events or skill sessions
+    event_end_at = models.DateTimeField(null=True, blank=True)    # End time for events
+
+    # Metadata
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE)  # Creator profile
     created_at = models.DateTimeField(auto_now_add=True)  # Timestamp of creation
 
     def __str__(self):
         return f"{self.title} ({self.post_type})"
+
 
           
  # Direct messages between profiles.
