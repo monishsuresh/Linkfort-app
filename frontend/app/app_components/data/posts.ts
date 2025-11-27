@@ -130,3 +130,7 @@ export const samplePosts: Post[] = [
         location: { latitude: 51.4982, longitude: 6.5204 },
     }
 ];
+
+export const addPost = (post: Post) => {
+    samplePosts.push(post);
+};

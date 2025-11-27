@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { samplePosts } from '../app_components/data/posts';
 import { Post } from '../app_components/models/Post';
+import { navigateToChat } from "./utility/navigation";
 
 interface ListScreenProps {
     setActiveScreen: React.Dispatch<React.SetStateAction<'map' | 'list'>>;
@@ -31,7 +32,7 @@ const ListScreen: React.FC<ListScreenProps> = ({ setActiveScreen }) => {
             <View style={styles.contactButton}>
                 <Button
                     title="Contact"
-                    onPress={() => alert(`Contacting ${item.user}`)}
+                    onPress={() => navigateToChat(item)} // alert(`Contacting ${item.user}`)
                 />
             </View>
         </View>
@@ -102,6 +103,7 @@ const ListScreen: React.FC<ListScreenProps> = ({ setActiveScreen }) => {
                 <Button title="Map View" onPress={() => setActiveScreen("map")} />
             </View>
 
+            {/* post button */}
             <View style={styles.buttonContainer2}>
                 <TouchableOpacity onPress={() => router.push('/create_post')}
                     style={{

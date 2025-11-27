@@ -18,16 +18,10 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         <Stack.Screen name="create_post" options={{ presentation: 'modal', title: 'New Post' }} />
+        <Stack.Screen name="chat_screen2" options={{ presentation: 'modal', headerShown: false }} />
+        <Stack.Screen name="chat_screen" options={{ presentation: 'modal' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
-    // <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}> // value=colorScheme === 'dark' ? DarkTheme : DefaultTheme
-    //   <Stack>
-    //     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-    //     <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-    //     <Stack.Screen name="create_post" options={{ presentation: 'modal', title: 'New Post' }} />
-    //   </Stack>
-    //   <StatusBar style="auto" />
-    // </ThemeProvider>
   );
 }

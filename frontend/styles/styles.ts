@@ -1,6 +1,19 @@
 import { StyleSheet } from "react-native";
 
 export const commonStyles = StyleSheet.create({
+    top_banner: {
+        height: 120,                 // make the banner taller
+        backgroundColor: "#007bff",
+        justifyContent: "flex-end",   // push text toward the bottom
+        alignItems: "center",
+        paddingBottom: 15,            // space between text and bottom edge
+    },
+    top_banner_text: {
+        color: "#fff",
+        fontSize: 25,
+        fontWeight: "bold",
+        marginBottom: 5,           // space between title and user
+    },
     banner: {
         flexDirection: "row",
         justifyContent: "space-between",

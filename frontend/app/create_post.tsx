@@ -1,15 +1,31 @@
 import { Picker } from "@react-native-picker/picker"; // install if not installed
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Switch, Text, TextInput, View } from "react-native";
+import { StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { addPost } from "./app_components/data/posts";
+import { Post, PostType } from "./app_components/models/Post";
 
 export default function CreatePost() {
     const router = useRouter();
 
-    const [postType, setPostType] = useState("offer");
+    const [postType, setPostType] = useState<PostType>("offer");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [shareLocation, setShareLocation] = useState(false);
+
+    const handleSubmit = () => {
+        const newPost: Post = {
+            id: String(Date.now()), // simple unique id
+            name: "UserX",
+            user: "User X",
+            type: postType,
+            details: description,
+            location: shareLocation ? { latitude: 51.5, longitude: 6.5 } : { latitude: 0, longitude: 0 },
+        };
+
+        addPost(newPost);
+        alert("Post created!");
+    };
 
     return (
         <View style={styles.container}>
@@ -18,7 +34,7 @@ export default function CreatePost() {
             <View style={styles.pickerContainer}>
                 <Picker
                     selectedValue={postType}
-                    onValueChange={(value) => setPostType(value)}
+                    onValueChange={(value) => setPostType(value as PostType)}
                 >
                     <Picker.Item label="Offer" value="offer" />
                     <Picker.Item label="Request" value="request" />
@@ -52,11 +68,27 @@ export default function CreatePost() {
                     onValueChange={setShareLocation}
                 />
             </View>
+
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    button: {
+        backgroundColor: "#007BFF",
+        padding: 15,
+        borderRadius: 5,
+        alignItems: "center",
+        marginTop: 20,
+    },
+    buttonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
     container: {
         flex: 1,
         padding: 20,
