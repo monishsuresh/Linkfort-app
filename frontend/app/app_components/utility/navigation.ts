@@ -11,3 +11,10 @@ export const navigateToChat = (postItem: Post) => {
         },
     });
 };
+
+export const navigateToProfile = (userId: string) => {
+    router.push({
+        pathname: "../../profile_screen",
+        params: { userId },
+    });
+};

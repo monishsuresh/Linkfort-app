@@ -6,7 +6,10 @@ import { ActivityIndicator, Alert, Button, Modal, StyleSheet, Text, TouchableOpa
 import MapView, { Callout, Marker, Region } from 'react-native-maps';
 import { samplePosts } from '../app_components/data/posts';
 import { Post } from '../app_components/models/Post';
-import { navigateToChat } from './utility/navigation';
+import { navigateToChat, navigateToProfile } from './utility/navigation';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { getDistance } from 'geolib';
+import { useUserStore } from './store/users';
 
 interface MapScreenProps {
     setActiveScreen: React.Dispatch<React.SetStateAction<'map' | 'list'>>;
@@ -23,14 +26,12 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
     const [filter, setFilter] = useState<'all' | 'offer' | 'request'>('all');
     const [filterVisible, setFilterVisible] = useState(false);
 
+    const users = useUserStore((state) => state.users);
+
     const filteredPosts = samplePosts.filter((post) => {
         if (filter === 'all') return true;
         return post.type === filter;
     });
-
-    const handleContact = (post: Post) => {
-        console.log('Contact', post.user);
-    };
 
     useEffect(() => {
         (async () => {
@@ -73,6 +74,14 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
             </View>
         );
     }
+
+    const distance =
+        selectedPost && location
+            ? getDistance(
+                { latitude: location.coords.latitude, longitude: location.coords.longitude },
+                { latitude: selectedPost.location.latitude, longitude: selectedPost.location.longitude }
+            ) / 1000
+            : null;
 
     return (
         <View style={commonStyles.container}>
@@ -165,7 +174,19 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
                     <View style={styles.modalBackground}>
                         <View style={styles.modalContainer}>
                             <Text style={styles.postTitle}>{selectedPost.name}</Text>
-                            <Text style={styles.postUser}>by {selectedPost.user}</Text>
+
+                            {distance !== null && (
+                                <View style={commonStyles.distanceRow}>
+                                    <MaterialIcons name="place" size={16} color="#666" style={{ marginRight: 4 }} />
+                                    <Text style={commonStyles.postDistance}>{distance.toFixed(1)} km away</Text>
+                                </View>
+                            )}
+
+                            <TouchableOpacity onPress={() => navigateToProfile(selectedPost.userId)}>
+                                <Text style={[styles.user, { textDecorationLine: "underline", color: "#007AFF" }]}>
+                                    by {users.find((u) => u.id === selectedPost.userId)?.name}
+                                </Text>
+                            </TouchableOpacity>
                             <Text style={styles.postDescription}>{selectedPost.details}</Text>
                             <TouchableOpacity
                                 style={styles.contactButton}
@@ -273,5 +294,10 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: 'white',
         borderRadius: 10,
+    },
+    user: {
+        fontSize: 14,
+        color: "#666",
+        marginBottom: 4,
     },
 });

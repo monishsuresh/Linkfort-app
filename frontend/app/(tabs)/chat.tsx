@@ -7,14 +7,17 @@ import { navigateToChat } from "../app_components/utility/navigation";
 import { getChatList } from "../app_components/data/chats";
 import { Post } from "../app_components/models/Post";
 import { useChatStore } from "../app_components/store/chatStore";
+import { useUserStore } from "../app_components/store/users";
 
 export default function ChatListScreen() {
     const chatList = useChatStore(state => state.chatList);
+    const users = useUserStore((state) => state.users);
+
     const renderItem = ({ item }: { item: Post }) => (
-        <TouchableOpacity onPress={() => router.push('/chat_screen')} // ?user=${encodeURIComponent(item.user)}&title=${encodeURIComponent(item.title)}`
+        <TouchableOpacity onPress={() => navigateToChat(item)} // ?user=${encodeURIComponent(item.user)}&title=${encodeURIComponent(item.title)}`
             style={styles.chatItem}>
             <Text style={styles.chatTitle}>{item.name}</Text>
-            <Text style={styles.chatUser}>{item.user}</Text>
+            <Text style={styles.chatUser}>{users.find((u) => u.id === item.userId)?.name}</Text>
         </TouchableOpacity>
     );
     console.log(chatList)

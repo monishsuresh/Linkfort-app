@@ -1,9 +1,14 @@
 import { router } from "expo-router";
-import React, { useState } from "react";
-import { Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { samplePosts } from '../app_components/data/posts';
 import { Post } from '../app_components/models/Post';
-import { navigateToChat } from "./utility/navigation";
+import { navigateToChat, navigateToProfile } from "./utility/navigation";
+import { commonStyles } from "@/styles/styles";
+import { MaterialIcons } from "@expo/vector-icons";
+import * as Location from 'expo-location';
+import { getDistance } from "geolib";
+import { useUserStore } from "./store/users";
 
 interface ListScreenProps {
     setActiveScreen: React.Dispatch<React.SetStateAction<'map' | 'list'>>;
@@ -12,31 +17,62 @@ interface ListScreenProps {
 const ListScreen: React.FC<ListScreenProps> = ({ setActiveScreen }) => {
     const [filter, setFilter] = useState<'all' | 'offer' | 'request'>('all');
     const [filterVisible, setFilterVisible] = useState(false);
-
+    const [location, setLocation] = useState<Location.LocationObject | null>(null);
+    const users = useUserStore((state) => state.users);
     const filteredPosts = samplePosts.filter((post) => {
         if (filter === 'all') return true;
         return post.type === filter;
     });
 
-    const renderItem = ({ item }: { item: Post }) => (
-        <View style={styles.card}>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.user}>by {item.user}</Text>
-            <Text style={styles.type}>
-                {item.type === "offer" ? "🟢 Offer" : "🔵 Request"}
-            </Text>
-            <Text style={styles.details}>{item.details}</Text>
-            <Text style={styles.coords}>
-                📍 {item.location.latitude.toFixed(5)}, {item.location.longitude.toFixed(5)}
-            </Text>
-            <View style={styles.contactButton}>
-                <Button
-                    title="Contact"
-                    onPress={() => navigateToChat(item)} // alert(`Contacting ${item.user}`)
-                />
+    useEffect(() => {
+        (async () => {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission denied', 'Location permission is required.');
+                return;
+            }
+            const loc = await Location.getCurrentPositionAsync({});
+            setLocation(loc);
+        })();
+    }, []);
+
+    const renderItem = ({ item }: { item: Post }) => {
+        const distance =
+            location
+                ? getDistance(
+                    { latitude: location.coords.latitude, longitude: location.coords.longitude },
+                    { latitude: item.location.latitude, longitude: item.location.longitude }
+                ) / 1000 // meters -> km
+                : null;
+        return (
+            <View style={styles.card}>
+                <Text style={styles.name}>{item.name}</Text>
+
+                {distance !== null && (
+                    <View style={commonStyles.distanceRow}>
+                        <MaterialIcons name="place" size={16} color="#666" style={{ marginRight: 4 }} />
+                        <Text style={commonStyles.postDistance}>{distance.toFixed(1)} km away</Text>
+                    </View>
+                )}
+
+                <TouchableOpacity onPress={() => navigateToProfile(item.userId)}>
+                    <Text style={[styles.user, { textDecorationLine: "underline", color: "#007AFF" }]}>
+                        by {users.find((u) => u.id === item.userId)?.name}
+                    </Text>
+                </TouchableOpacity>
+                <Text style={styles.type}>
+                    {item.type === "offer" ? "🟢 Offer" : "🔵 Request"}
+                </Text>
+                <Text style={styles.details}>{item.details}</Text>
+                <View style={styles.contactButton}>
+                    <Button
+                        title="Contact"
+                        onPress={() => navigateToChat(item)} // alert(`Contacting ${item.user}`)
+                    />
+                </View>
             </View>
-        </View>
-    );
+        )
+    };
 
     return (
         <View style={styles.container}>

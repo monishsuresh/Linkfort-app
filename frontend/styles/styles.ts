@@ -1,18 +1,10 @@
 import { StyleSheet } from "react-native";
 
 export const commonStyles = StyleSheet.create({
-    top_banner: {
-        height: 120,                 // make the banner taller
-        backgroundColor: "#007bff",
-        justifyContent: "flex-end",   // push text toward the bottom
-        alignItems: "center",
-        paddingBottom: 15,            // space between text and bottom edge
-    },
-    top_banner_text: {
-        color: "#fff",
-        fontSize: 25,
-        fontWeight: "bold",
-        marginBottom: 5,           // space between title and user
+    container: {
+        flex: 1,
+        backgroundColor: "#f5f5f5",
+        paddingTop: 20,
     },
     banner: {
         flexDirection: "row",
@@ -47,6 +39,12 @@ export const commonStyles = StyleSheet.create({
         fontWeight: '700',
         color: '#333',
     },
+    distanceRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        marginVertical: 4,
+    },
     dropdown: {
         position: "absolute",
         top: 60,              // adjust depending on your header height
@@ -67,9 +65,21 @@ export const commonStyles = StyleSheet.create({
     dropdownText: {
         fontSize: 16,
     },
-    container: {
-        flex: 1,
-        backgroundColor: "#f5f5f5",
-        paddingTop: 20,
+    postDistance: {
+        fontSize: 14,
+        color: '#666',
+    },
+    top_banner: {
+        height: 120,                 // make the banner taller
+        backgroundColor: "#007bff",
+        justifyContent: "flex-end",   // push text toward the bottom
+        alignItems: "center",
+        paddingBottom: 15,            // space between text and bottom edge
+    },
+    top_banner_text: {
+        color: "#fff",
+        fontSize: 25,
+        fontWeight: "bold",
+        marginBottom: 5,           // space between title and user
     },
 });

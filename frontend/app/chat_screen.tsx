@@ -7,6 +7,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useChatStore } from './app_components/store/chatStore'
 import { Post } from './app_components/models/Post'
 import { commonStyles } from '@/styles/styles'
+import { useUserStore } from './app_components/store/users'
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ChatParams {
     postData: string; // This key holds the serialized Post object
@@ -14,6 +16,7 @@ interface ChatParams {
 
 export default function Example() {
     const addPost = useChatStore(state => state.addPost);
+    const users = useUserStore((state) => state.users);
 
     const params = useLocalSearchParams() as unknown as ChatParams;
 
@@ -34,16 +37,6 @@ export default function Example() {
 
     useEffect(() => {
         setMessages([
-            {
-                _id: 1,
-                text: 'Hello developer',
-                createdAt: new Date(),
-                user: {
-                    _id: 2,
-                    name: 'John Doe',
-                    avatar: 'https://placeimg.com/140/140/any',
-                },
-            },
         ])
     }, []) // 
 
@@ -106,116 +99,123 @@ export default function Example() {
             <View style={styles.banner}>
                 <Text style={styles.bannerTitle}>{post_item?.name}</Text>
             </View>
+            <SafeAreaView style={styles.container}>
 
-            {/* user rating*/}
-            <Modal
-                visible={showRateBox}
-                animationType="fade"
-                transparent={true}
-                onRequestClose={() => setShowRateBox(false)}
-            >
-                <TouchableWithoutFeedback onPress={() => setShowRateBox(false)}>
-                    <View style={styles.modalBackdrop}>
-                        <TouchableWithoutFeedback onPress={() => { }}>
-                            <View style={styles.modalContainer}>
 
-                                {/* Close Button */}
-                                <TouchableOpacity
-                                    style={commonStyles.closeButton}
-                                    onPress={() => setShowRateBox(false)}
-                                >
-                                    <Text style={commonStyles.closeText}>✕</Text>
-                                </TouchableOpacity>
+                {/* user rating*/}
+                <Modal
+                    visible={showRateBox}
+                    animationType="fade"
+                    transparent={true}
+                    onRequestClose={() => setShowRateBox(false)}
+                >
+                    <TouchableWithoutFeedback onPress={() => setShowRateBox(false)}>
+                        <View style={styles.modalBackdrop}>
+                            <TouchableWithoutFeedback onPress={() => { }}>
+                                <View style={styles.modalContainer}>
 
-                                <Text style={styles.modalTitle}>Rate user</Text>
-                                <Text style={styles.modalSubtitle}>Tap the stars to rate</Text>
+                                    {/* Close Button */}
+                                    <TouchableOpacity
+                                        style={commonStyles.closeButton}
+                                        onPress={() => setShowRateBox(false)}
+                                    >
+                                        <Text style={commonStyles.closeText}>✕</Text>
+                                    </TouchableOpacity>
 
-                                {/* ⭐ STAR SELECTOR */}
-                                <View style={styles.starsRow}>
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                        <TouchableOpacity
-                                            key={star}
-                                            onPress={() => setSelectedStars(star)}
-                                            style={styles.starButton}
-                                        >
-                                            <Text
-                                                style={[
-                                                    styles.star,
-                                                    { color: star <= selectedStars ? '#FFD700' : '#CCCCCC' }
-                                                ]}
+                                    <Text style={styles.modalTitle}>Rate user</Text>
+                                    <Text style={styles.modalSubtitle}>Tap the stars to rate</Text>
+
+                                    {/* ⭐ STAR SELECTOR */}
+                                    <View style={styles.starsRow}>
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <TouchableOpacity
+                                                key={star}
+                                                onPress={() => setSelectedStars(star)}
+                                                style={styles.starButton}
                                             >
-                                                ★
-                                            </Text>
-                                        </TouchableOpacity>
-                                    ))}
+                                                <Text
+                                                    style={[
+                                                        styles.star,
+                                                        { color: star <= selectedStars ? '#FFD700' : '#CCCCCC' }
+                                                    ]}
+                                                >
+                                                    ★
+                                                </Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+
+                                    {/* Submit Button */}
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.submitButton,
+                                            { opacity: selectedStars === 0 ? 0.4 : 1 }
+                                        ]}
+                                        disabled={selectedStars === 0}
+                                        onPress={() => {
+                                            console.log("User rated:", selectedStars);
+                                            setShowRateBox(false);
+                                            setSelectedStars(0);
+                                        }}
+                                    >
+                                        <Text style={styles.submitText}>Submit</Text>
+                                    </TouchableOpacity>
+
                                 </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </Modal>
 
-                                {/* Submit Button */}
-                                <TouchableOpacity
-                                    style={[
-                                        styles.submitButton,
-                                        { opacity: selectedStars === 0 ? 0.4 : 1 }
-                                    ]}
-                                    disabled={selectedStars === 0}
-                                    onPress={() => {
-                                        console.log("User rated:", selectedStars);
-                                        setShowRateBox(false);
-                                        setSelectedStars(0);
-                                    }}
-                                >
-                                    <Text style={styles.submitText}>Submit</Text>
-                                </TouchableOpacity>
-
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </View>
-                </TouchableWithoutFeedback>
-            </Modal>
-
-            <GiftedChat
-                messages={messages}
-                onSend={messages => onSend(messages)}
-                user={{
-                    _id: 1,
-                }}
-                renderBubble={props => (
-                    <Bubble
-                        {...props}
-                        wrapperStyle={{
-                            left: { backgroundColor: '#4CAF50', }
-                        }}
-                        textStyle={{
-                            left: {
-                                color: 'white',   // ← Change this to whatever color you want
-                            },
-                        }}
-                    />
-                )}
-                renderTime={props => (
-                    <Time
-                        {...props}
-                        timeTextStyle={{
-                            left: { color: 'white' },
-                            right: { color: 'white' },
-                        }}
-                    />
-                )}
-                renderInputToolbar={props => (
-                    <InputToolbar
-                        {...props}
-                        containerStyle={{
-                            backgroundColor: '#000000ff',
-                            borderTopWidth: 0,
-                            paddingHorizontal: 10,
-                            paddingVertical: 10,
-                        }}
-                        primaryStyle={{ alignItems: 'center' }}
-                    />
-                )}
-                renderAvatar={props => null}
-                keyboardAvoidingViewProps={{ keyboardVerticalOffset }}
-            />
+                <GiftedChat
+                    messages={messages}
+                    onSend={messages => onSend(messages)}
+                    user={{
+                        _id: 1,
+                    }}
+                    renderBubble={props => (
+                        <Bubble
+                            {...props}
+                            wrapperStyle={{
+                                left: { backgroundColor: '#4CAF50', }
+                            }}
+                            textStyle={{
+                                left: {
+                                    color: 'white',   // ← Change this to whatever color you want
+                                },
+                            }}
+                        />
+                    )}
+                    renderTime={props => (
+                        <Time
+                            {...props}
+                            timeTextStyle={{
+                                left: { color: 'white' },
+                                right: { color: 'white' },
+                            }}
+                        />
+                    )}
+                    renderInputToolbar={props => (
+                        <InputToolbar
+                            {...props}
+                            containerStyle={{
+                                backgroundColor: '#000000ff',
+                                borderTopWidth: 0,
+                                paddingHorizontal: 10,
+                                paddingVertical: 10,
+                            }}
+                            primaryStyle={{ alignItems: 'center' }}
+                        />
+                    )}
+                    renderAvatar={props => null}
+                    keyboardAvoidingViewProps={{ keyboardVerticalOffset }}
+                    listProps={{
+                        keyboardShouldPersistTaps: "handled", // <--- this fixes the keyboard closing issue
+                    }}
+                />
+            </SafeAreaView>
         </View>
+
 
     )
 }
