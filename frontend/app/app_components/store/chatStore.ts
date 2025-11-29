@@ -11,9 +11,14 @@ export const useChatStore = create<ChatState>((set) => ({
     chatList: [],
 
     addPost: (post: Post) =>
-        set((state) => ({
-            chatList: [...state.chatList, post],
-        })),
+        set((state) => {
+            // Check if the post is already in the list by id
+
+            const exists = state.chatList.some((p) => p.id === post.id);
+            if (exists) return {}; // no change
+            const newChatList = [...state.chatList, post];
+            return { chatList: newChatList }; // add new post
+        }),
 
     clearChatList: () => set({ chatList: [] }),
 }));

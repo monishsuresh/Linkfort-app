@@ -2,10 +2,11 @@ import { commonStyles } from '@/styles/styles';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import MapView, { Marker, Region } from 'react-native-maps';
+import { ActivityIndicator, Alert, Button, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import MapView, { Callout, Marker, Region } from 'react-native-maps';
 import { samplePosts } from '../app_components/data/posts';
 import { Post } from '../app_components/models/Post';
+import { navigateToChat } from './utility/navigation';
 
 interface MapScreenProps {
     setActiveScreen: React.Dispatch<React.SetStateAction<'map' | 'list'>>;
@@ -15,6 +16,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const [region, setRegion] = useState<Region | null>(null);
     const [loading, setLoading] = useState(true);
+    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
     const [posts, setPosts] = useState<Post[]>(samplePosts);
 
@@ -25,6 +27,10 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
         if (filter === 'all') return true;
         return post.type === filter;
     });
+
+    const handleContact = (post: Post) => {
+        console.log('Contact', post.user);
+    };
 
     useEffect(() => {
         (async () => {
@@ -139,9 +145,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
                             latitude: post.location.latitude,
                             longitude: post.location.longitude,
                         }}
-                        title={post.type}
-                        description={post.name}
-                        anchor={{ x: 0.5, y: 0.5 }} // center the marker
+                        onPress={() => setSelectedPost(post)} // <-- select marker
                         image={
                             post.type === "offer"
                                 ? require("../../assets/images/marker blue.png")
@@ -150,6 +154,38 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
                     />
                 ))}
             </MapView>
+
+            {/* Modal to show marker info */}
+            {selectedPost && (
+                <Modal
+                    transparent={true}
+                    visible={true}
+                    onRequestClose={() => setSelectedPost(null)}
+                >
+                    <View style={styles.modalBackground}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.postTitle}>{selectedPost.name}</Text>
+                            <Text style={styles.postUser}>by {selectedPost.user}</Text>
+                            <Text style={styles.postDescription}>{selectedPost.details}</Text>
+                            <TouchableOpacity
+                                style={styles.contactButton}
+                                onPress={() => {
+                                    navigateToChat(selectedPost);
+                                    setSelectedPost(null);
+                                }}
+                            >
+                                <Text style={styles.contactButtonText}>Contact</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.contactButton, { marginTop: 10 }]}
+                                onPress={() => setSelectedPost(null)}
+                            >
+                                <Text style={styles.contactButtonText}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            )}
 
             <View style={styles.buttonContainer}>
                 <Button title="List View" onPress={() => setActiveScreen("list")} />
@@ -197,5 +233,45 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 80,   // above the + button (which is bottom: 20)
         right: 20,
+    },
+    calloutContainer: {
+        width: 200,
+        padding: 10,
+        backgroundColor: 'white',
+        borderRadius: 8,
+        elevation: 5,
+    },
+    postTitle: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginBottom: 4,
+    },
+    postUser: {
+        fontStyle: 'italic',
+        marginBottom: 4,
+    },
+    postDescription: {
+        marginBottom: 8,
+    },
+    contactButton: {
+        backgroundColor: '#007bff',
+        paddingVertical: 6,
+        borderRadius: 4,
+        alignItems: 'center',
+    },
+    contactButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    modalBackground: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        width: 300,
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 10,
     },
 });

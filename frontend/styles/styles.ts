@@ -35,6 +35,18 @@ export const commonStyles = StyleSheet.create({
         fontSize: 16,
         color: "white"
     },
+    closeButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        padding: 6,
+        zIndex: 20,
+    },
+    closeText: {
+        fontSize: 22,
+        fontWeight: '700',
+        color: '#333',
+    },
     dropdown: {
         position: "absolute",
         top: 60,              // adjust depending on your header height
