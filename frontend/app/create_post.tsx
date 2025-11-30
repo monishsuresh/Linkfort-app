@@ -13,6 +13,7 @@ export default function CreatePost() {
     const [description, setDescription] = useState("");
     const [shareLocation, setShareLocation] = useState(false);
     const isFormValid = title.trim().length > 0 && description.trim().length > 0;
+    const [message, setMessage] = useState('');
 
     const handleSubmit = () => {
         const newPost: Post = {
@@ -24,8 +25,12 @@ export default function CreatePost() {
             location: shareLocation ? { latitude: 51.5, longitude: 6.5 } : { latitude: 0, longitude: 0 },
         };
 
-        addPost(newPost);
-        alert("Post created!");
+        // addPost(newPost);
+        // alert("Post created!");
+        // show temporary message instead of alert
+        setMessage("Post created!");
+        setTimeout(() => setMessage(''), 2000);
+
         setPostType("offer");
         setTitle("");
         setDescription("");
@@ -34,12 +39,27 @@ export default function CreatePost() {
 
     return (
         <View style={styles.container}>
+            {message ? (
+                <Text
+                    style={{
+                        color: 'green',
+                        textAlign: 'center',
+                        marginVertical: 8,
+                        fontSize: 20, // increase this to make it bigger
+                        fontWeight: 'bold', // optional: make it stand out
+                    }}
+                >
+                    {message}
+                </Text>
+            ) : null}
+
             {/* Post Type */}
             <Text style={styles.label}>Post Type</Text>
             <View style={styles.pickerContainer}>
                 <Picker
                     selectedValue={postType}
                     onValueChange={(value) => setPostType(value as PostType)}
+                    style={{ color: 'black' }}
                 >
                     <Picker.Item label="Offer" value="offer" />
                     <Picker.Item label="Request" value="request" />

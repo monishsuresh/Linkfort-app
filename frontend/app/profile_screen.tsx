@@ -162,7 +162,7 @@ export default function Profile() {
                     <View style={ratingStyles.modalBackdrop}>
                         <KeyboardAvoidingView
                             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-                            behavior={Platform.OS === "ios" ? "padding" : undefined} // Android handles it automatically
+                            behavior={Platform.OS === "ios" ? "padding" : "height"} // Android handles it automatically
                             keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0} // adjust if needed
                         >
                             <ScrollView
