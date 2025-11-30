@@ -9,6 +9,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import * as Location from 'expo-location';
 import { getDistance } from "geolib";
 import { useUserStore } from "./store/users";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ListScreenProps {
     setActiveScreen: React.Dispatch<React.SetStateAction<'map' | 'list'>>;
@@ -75,12 +76,17 @@ const ListScreen: React.FC<ListScreenProps> = ({ setActiveScreen }) => {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+
 
             {/* Search & Filter header */}
+            {/* Header */}
+            <View style={commonStyles.header}>
+                <Text style={commonStyles.headerTitle}>Linkfort</Text>
+            </View>
             <View style={styles.banner}>
-                <TouchableOpacity style={styles.bannerButton}>
-                    <Text style={{ color: "white" }}>Search</Text>
+                <TouchableOpacity style={styles.bannerButton} onPress={() => setActiveScreen("map")} >
+                    <Text style={{ color: "white" }}>Map View</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -134,11 +140,6 @@ const ListScreen: React.FC<ListScreenProps> = ({ setActiveScreen }) => {
                 }}
             />
 
-            {/* Bottom Button */}
-            <View style={styles.buttonContainer}>
-                <Button title="Map View" onPress={() => setActiveScreen("map")} />
-            </View>
-
             {/* post button */}
             <View style={styles.buttonContainer2}>
                 <TouchableOpacity onPress={() => router.push('/create_post')}
@@ -153,7 +154,8 @@ const ListScreen: React.FC<ListScreenProps> = ({ setActiveScreen }) => {
                 </TouchableOpacity>
             </View>
 
-        </View>
+
+        </SafeAreaView>
     );
 };
 

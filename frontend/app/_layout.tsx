@@ -61,6 +61,7 @@ export default function RootLayout() {
           name="profile_screen"
           options={{
             title: "Profile", // hide the entire header
+            headerShown: false
           }}
         />
       </Stack>

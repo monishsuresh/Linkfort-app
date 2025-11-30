@@ -8,6 +8,7 @@ import { getChatList } from "../app_components/data/chats";
 import { Post } from "../app_components/models/Post";
 import { useChatStore } from "../app_components/store/chatStore";
 import { useUserStore } from "../app_components/store/users";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ChatListScreen() {
     const chatList = useChatStore(state => state.chatList);
@@ -24,9 +25,9 @@ export default function ChatListScreen() {
 
     return (
 
-        <View style={styles.container}>
-            <View style={commonStyles.top_banner}>
-                <Text style={commonStyles.top_banner_text}>Chats</Text>
+        <SafeAreaView style={styles.container}>
+            <View style={commonStyles.header}>
+                <Text style={commonStyles.headerTitle}>Messages</Text>
             </View>
             <FlatList
                 data={chatList}
@@ -34,7 +35,7 @@ export default function ChatListScreen() {
                 renderItem={renderItem}
                 contentContainerStyle={{ paddingBottom: 20 }}
             />
-        </View>
+        </SafeAreaView>
     );
 }
 

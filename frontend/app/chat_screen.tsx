@@ -17,6 +17,7 @@ interface ChatParams {
 export default function Example() {
     const addPost = useChatStore(state => state.addPost);
     const users = useUserStore((state) => state.users);
+    const incrementUserExchanges = useUserStore((state) => state.incrementUserExchanges);
 
     const params = useLocalSearchParams() as unknown as ChatParams;
 
@@ -82,12 +83,14 @@ export default function Example() {
                     GiftedChat.append(previousMessages, [autoReply]),
                 );
 
-                if (!hasShownRateBox) {
-                    setTimeout(() => {
-                        setShowRateBox(true);
-                        setHasShownRateBox(true);
-                    }, 1000);
-                }
+                incrementUserExchanges(post_item!.userId)
+
+                // if (!hasShownRateBox) {
+                //     setTimeout(() => {
+                //         setShowRateBox(true);
+                //         setHasShownRateBox(true);
+                //     }, 1000);
+                // }
             }, 1000); // 1 second delay
         }
 

@@ -10,6 +10,8 @@ import { navigateToChat, navigateToProfile } from './utility/navigation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { getDistance } from 'geolib';
 import { useUserStore } from './store/users';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface MapScreenProps {
     setActiveScreen: React.Dispatch<React.SetStateAction<'map' | 'list'>>;
@@ -84,11 +86,19 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
             : null;
 
     return (
-        <View style={commonStyles.container}>
+        <SafeAreaView style={styles.container}>
+            {/* Header */}
+            <View style={commonStyles.header}>
+                <Text style={commonStyles.headerTitle}>Linkfort</Text>
+            </View>
+
             {/* banner */}
             <View style={commonStyles.banner}>
-                <TouchableOpacity style={commonStyles.bannerButton}>
-                    <Text style={{ color: "white" }}>Search</Text>
+                <TouchableOpacity
+                    style={commonStyles.bannerButton}
+                    onPress={() => setActiveScreen("list")}
+                >
+                    <Text style={{ color: "white" }}>List View</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -207,10 +217,6 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
                     </View>
                 </Modal>
             )}
-
-            <View style={styles.buttonContainer}>
-                <Button title="List View" onPress={() => setActiveScreen("list")} />
-            </View>
             <View style={styles.buttonContainer2}>
                 <TouchableOpacity onPress={() => router.push('/create_post')}
                     style={{
@@ -223,7 +229,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
                     <Text style={{ color: "white", fontSize: 24 }}>+</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 

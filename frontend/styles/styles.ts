@@ -65,6 +65,18 @@ export const commonStyles = StyleSheet.create({
     dropdownText: {
         fontSize: 16,
     },
+    header: {
+        height: 60,
+        backgroundColor: "#fff",
+        borderBottomWidth: 1,
+        borderColor: "#eee",
+        paddingHorizontal: 16,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    headerTitle: { fontSize: 18, fontWeight: "700" },
+    iconButton: { padding: 6 },
     postDistance: {
         fontSize: 14,
         color: '#666',
@@ -82,4 +94,19 @@ export const commonStyles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 5,           // space between title and user
     },
+    trustCard: {
+        marginHorizontal: 14,
+        marginTop: 18,
+        backgroundColor: "#F3F4FF",
+        borderRadius: 16,
+        padding: 16,
+    },
+    trustHeader: { flexDirection: "row", alignItems: "center" },
+    trustTitle: { marginLeft: 8, fontWeight: "700" },
+    trustStats: { flexDirection: "row", justifyContent: "space-between", marginTop: 12 },
+    statBlock: { alignItems: "center", flex: 1 },
+    statNumber: { fontSize: 28, fontWeight: "900", color: "#4F46E5" },
+    statLabel: { color: "#6B7280" },
+    starsRow: { alignItems: "center", marginTop: 8 },
+    stars: { fontSize: 18 },
 });

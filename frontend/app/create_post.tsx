@@ -12,12 +12,13 @@ export default function CreatePost() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [shareLocation, setShareLocation] = useState(false);
+    const isFormValid = title.trim().length > 0 && description.trim().length > 0;
 
     const handleSubmit = () => {
         const newPost: Post = {
             id: String(Date.now()), // simple unique id
             name: "UserX",
-            user: "User X",
+            userId: "0",
             type: postType,
             details: description,
             location: shareLocation ? { latitude: 51.5, longitude: 6.5 } : { latitude: 0, longitude: 0 },
@@ -25,6 +26,10 @@ export default function CreatePost() {
 
         addPost(newPost);
         alert("Post created!");
+        setPostType("offer");
+        setTitle("");
+        setDescription("");
+        setShareLocation(false);
     };
 
     return (
@@ -69,7 +74,16 @@ export default function CreatePost() {
                 />
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <TouchableOpacity
+                style={[
+                    styles.button,
+                    { backgroundColor: isFormValid ? "#007AFF" : "#999" },
+                ]}
+                disabled={!isFormValid}
+                onPress={() => {
+                    if (isFormValid) handleSubmit();
+                }}
+            >
                 <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
         </View>
