@@ -68,7 +68,7 @@ export default function Example() {
             setTimeout(() => {
                 const autoReply: IMessage = {
                     _id: `${Date.now()}-${Math.floor(Math.random() * 10000)}`, // unique id
-                    text: 'This is an automatic reply!',
+                    text: "Let's meet in front of the rathaus",
                     createdAt: new Date(),
                     user: {
                         _id: 2, // bot user id

@@ -6,21 +6,21 @@ export const samplePosts: Post[] = [
         name: "Vegetables Sale",
         userId: '1',
         type: "offer",
-        details: 'Offering extra vegetables from my garden',
+        details: "Offering extra vegetables from my garden",
         location: { latitude: 51.502, longitude: 6.56 },
     },
     {
         id: "2",
         name: "Moving Help",
-        userId: '1',
+        userId: '2',
         type: "request",
-        details: 'Looking for someone to help move furniture this weekend',
+        details: "Looking for someone to help move furniture this weekend",
         location: { latitude: 51.506, longitude: 6.57 },
     },
     {
         id: "3",
         name: "Old Books Giveaway",
-        userId: '1',
+        userId: '3',
         type: "offer",
         details: "Giving away a small collection of fiction books.",
         location: { latitude: 51.512, longitude: 6.5436 },
@@ -28,7 +28,7 @@ export const samplePosts: Post[] = [
     {
         id: "4",
         name: "Looking for Gardening Help",
-        userId: '1',
+        userId: '4',
         type: "request",
         details: "Need assistance with planting flowers in my backyard.",
         location: { latitude: 51.501, longitude: 6.5302 },
@@ -36,7 +36,7 @@ export const samplePosts: Post[] = [
     {
         id: "5",
         name: "Spare Chair",
-        userId: '1',
+        userId: '5',
         type: "offer",
         details: "One office chair available for free pickup.",
         location: { latitude: 51.5085, longitude: 6.5708 },
@@ -52,7 +52,7 @@ export const samplePosts: Post[] = [
     {
         id: "7",
         name: "Free Houseplants",
-        userId: '1',
+        userId: '2',
         type: "offer",
         details: "Two potted plants available for pickup.",
         location: { latitude: 51.5001, longitude: 6.5103 },
@@ -60,7 +60,7 @@ export const samplePosts: Post[] = [
     {
         id: "8",
         name: "Help Painting a Room",
-        userId: '1',
+        userId: '3',
         type: "request",
         details: "Need a hand painting a small bedroom this weekend.",
         location: { latitude: 51.502, longitude: 6.5509 },
@@ -68,7 +68,7 @@ export const samplePosts: Post[] = [
     {
         id: "9",
         name: "Leftover Building Materials",
-        userId: '2',
+        userId: '4',
         type: "offer",
         details: "Offering extra wooden planks and tiles from a renovation.",
         location: { latitude: 51.5091, longitude: 6.5452 },
@@ -76,7 +76,7 @@ export const samplePosts: Post[] = [
     {
         id: "10",
         name: "Looking for Math Tutor",
-        userId: '3',
+        userId: '5',
         type: "request",
         details: "Need someone to help my child with high-school math.",
         location: { latitude: 51.5078, longitude: 6.5633 },
@@ -84,7 +84,7 @@ export const samplePosts: Post[] = [
     {
         id: "11",
         name: "Free Kitchen Utensils",
-        userId: '4',
+        userId: '1',
         type: "offer",
         details: "Various utensils and a spare frying pan available.",
         location: { latitude: 51.5034, longitude: 6.5599 },
@@ -92,7 +92,7 @@ export const samplePosts: Post[] = [
     {
         id: "12",
         name: "Need Laptop Charger",
-        userId: '5',
+        userId: '2',
         type: "request",
         details: "Looking to borrow a USB-C laptop charger for a day.",
         location: { latitude: 51.5049, longitude: 6.5487 },
@@ -100,7 +100,7 @@ export const samplePosts: Post[] = [
     {
         id: "13",
         name: "Free Old Bicycle",
-        userId: '2',
+        userId: '3',
         type: "offer",
         details: "Used city bike still in good condition.",
         location: { latitude: 51.5112, longitude: 6.5701 },
@@ -124,7 +124,7 @@ export const samplePosts: Post[] = [
     {
         id: "16",
         name: "Borrow a Drill",
-        userId: '3',
+        userId: '1',
         type: "request",
         details: "Need a drill for a small home project.",
         location: { latitude: 51.4982, longitude: 6.5204 },
