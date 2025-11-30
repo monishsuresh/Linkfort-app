@@ -2,10 +2,16 @@ import { commonStyles } from '@/styles/styles';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import MapView, { Marker, Region } from 'react-native-maps';
+import { ActivityIndicator, Alert, Button, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import MapView, { Callout, Marker, Region } from 'react-native-maps';
 import { samplePosts } from '../app_components/data/posts';
 import { Post } from '../app_components/models/Post';
+import { navigateToChat, navigateToProfile } from './utility/navigation';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { getDistance } from 'geolib';
+import { useUserStore } from './store/users';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface MapScreenProps {
     setActiveScreen: React.Dispatch<React.SetStateAction<'map' | 'list'>>;
@@ -15,11 +21,14 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const [region, setRegion] = useState<Region | null>(null);
     const [loading, setLoading] = useState(true);
+    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
     const [posts, setPosts] = useState<Post[]>(samplePosts);
 
     const [filter, setFilter] = useState<'all' | 'offer' | 'request'>('all');
     const [filterVisible, setFilterVisible] = useState(false);
+
+    const users = useUserStore((state) => state.users);
 
     const filteredPosts = samplePosts.filter((post) => {
         if (filter === 'all') return true;
@@ -68,12 +77,28 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
         );
     }
 
+    const distance =
+        selectedPost && location
+            ? getDistance(
+                { latitude: location.coords.latitude, longitude: location.coords.longitude },
+                { latitude: selectedPost.location.latitude, longitude: selectedPost.location.longitude }
+            ) / 1000
+            : null;
+
     return (
-        <View style={commonStyles.container}>
+        <SafeAreaView style={styles.container}>
+            {/* Header */}
+            <View style={commonStyles.header}>
+                <Text style={commonStyles.headerTitle}>Linkfort</Text>
+            </View>
+
             {/* banner */}
             <View style={commonStyles.banner}>
-                <TouchableOpacity style={commonStyles.bannerButton}>
-                    <Text style={{ color: "white" }}>Search</Text>
+                <TouchableOpacity
+                    style={commonStyles.bannerButton}
+                    onPress={() => setActiveScreen("list")}
+                >
+                    <Text style={{ color: "white" }}>List View</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -139,9 +164,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
                             latitude: post.location.latitude,
                             longitude: post.location.longitude,
                         }}
-                        title={post.type}
-                        description={post.name}
-                        anchor={{ x: 0.5, y: 0.5 }} // center the marker
+                        onPress={() => setSelectedPost(post)} // <-- select marker
                         image={
                             post.type === "offer"
                                 ? require("../../assets/images/marker blue.png")
@@ -151,9 +174,49 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
                 ))}
             </MapView>
 
-            <View style={styles.buttonContainer}>
-                <Button title="List View" onPress={() => setActiveScreen("list")} />
-            </View>
+            {/* Modal to show marker info */}
+            {selectedPost && (
+                <Modal
+                    transparent={true}
+                    visible={true}
+                    onRequestClose={() => setSelectedPost(null)}
+                >
+                    <View style={styles.modalBackground}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.postTitle}>{selectedPost.name}</Text>
+
+                            {distance !== null && (
+                                <View style={commonStyles.distanceRow}>
+                                    <MaterialIcons name="place" size={16} color="#666" style={{ marginRight: 4 }} />
+                                    <Text style={commonStyles.postDistance}>{distance.toFixed(1)} km away</Text>
+                                </View>
+                            )}
+
+                            <TouchableOpacity onPress={() => navigateToProfile(selectedPost.userId)}>
+                                <Text style={[styles.user, { textDecorationLine: "underline", color: "#007AFF" }]}>
+                                    by {users.find((u) => u.id === selectedPost.userId)?.name}
+                                </Text>
+                            </TouchableOpacity>
+                            <Text style={styles.postDescription}>{selectedPost.details}</Text>
+                            <TouchableOpacity
+                                style={styles.contactButton}
+                                onPress={() => {
+                                    navigateToChat(selectedPost);
+                                    setSelectedPost(null);
+                                }}
+                            >
+                                <Text style={styles.contactButtonText}>Contact</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.contactButton, { marginTop: 10 }]}
+                                onPress={() => setSelectedPost(null)}
+                            >
+                                <Text style={styles.contactButtonText}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            )}
             <View style={styles.buttonContainer2}>
                 <TouchableOpacity onPress={() => router.push('/create_post')}
                     style={{
@@ -166,7 +229,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
                     <Text style={{ color: "white", fontSize: 24 }}>+</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -197,5 +260,50 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 80,   // above the + button (which is bottom: 20)
         right: 20,
+    },
+    calloutContainer: {
+        width: 200,
+        padding: 10,
+        backgroundColor: 'white',
+        borderRadius: 8,
+        elevation: 5,
+    },
+    postTitle: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginBottom: 4,
+    },
+    postUser: {
+        fontStyle: 'italic',
+        marginBottom: 4,
+    },
+    postDescription: {
+        marginBottom: 8,
+    },
+    contactButton: {
+        backgroundColor: '#007bff',
+        paddingVertical: 6,
+        borderRadius: 4,
+        alignItems: 'center',
+    },
+    contactButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    modalBackground: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        width: 300,
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 10,
+    },
+    user: {
+        fontSize: 14,
+        color: "#666",
+        marginBottom: 4,
     },
 });

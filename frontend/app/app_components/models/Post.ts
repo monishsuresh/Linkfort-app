@@ -3,7 +3,7 @@ export type PostType = "offer" | "request";
 export type Post = {
     id: string;
     name: string;
-    user: string;
+    userId: string;
     type: PostType;
     details: string;
     location: {

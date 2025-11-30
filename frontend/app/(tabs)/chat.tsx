@@ -1,12 +1,65 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+// app/(tabs)/chat/index.tsx
+import React from "react";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { commonStyles } from "@/styles/styles";
+import { router } from "expo-router";
+import { navigateToChat } from "../app_components/utility/navigation";
+import { getChatList } from "../app_components/data/chats";
+import { Post } from "../app_components/models/Post";
+import { useChatStore } from "../app_components/store/chatStore";
+import { useUserStore } from "../app_components/store/users";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function chat() {
+export default function ChatListScreen() {
+    const chatList = useChatStore(state => state.chatList);
+    const users = useUserStore((state) => state.users);
+
+    const renderItem = ({ item }: { item: Post }) => (
+        <TouchableOpacity onPress={() => navigateToChat(item)} // ?user=${encodeURIComponent(item.user)}&title=${encodeURIComponent(item.title)}`
+            style={styles.chatItem}>
+            <Text style={styles.chatTitle}>{item.name}</Text>
+            <Text style={styles.chatUser}>{users.find((u) => u.id === item.userId)?.name}</Text>
+        </TouchableOpacity>
+    );
+    console.log(chatList)
+
     return (
-        <View>
-            <Text>chat</Text>
-        </View>
-    )
+
+        <SafeAreaView style={styles.container}>
+            <View style={commonStyles.header}>
+                <Text style={commonStyles.headerTitle}>Messages</Text>
+            </View>
+            <FlatList
+                data={chatList}
+                keyExtractor={(item) => item.id}
+                renderItem={renderItem}
+                contentContainerStyle={{ paddingBottom: 20 }}
+            />
+        </SafeAreaView>
+    );
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#f5f5f5",
+    },
+    chatItem: {
+        padding: 15,
+        borderBottomWidth: 1,
+        borderColor: "#ddd",
+        backgroundColor: "#fff",
+        marginHorizontal: 10,
+        marginVertical: 5,
+        borderRadius: 8,
+    },
+    chatTitle: {
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+    chatUser: {
+        fontSize: 14,
+        color: "#555",
+        marginTop: 3,
+    },
+});
