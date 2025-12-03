@@ -1,47 +1,35 @@
-import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { samplePosts } from '../app_components/data/posts';
-import { Post } from '../app_components/models/Post';
-import { navigateToChat, navigateToProfile } from "./utility/navigation";
-import { commonStyles } from "@/styles/styles";
-import { MaterialIcons } from "@expo/vector-icons";
-import * as Location from 'expo-location';
-import { getDistance } from "geolib";
+import { Button, StyleSheet, View, Text, TouchableOpacity, FlatList } from "react-native"
 import { useUserStore } from "./store/users";
+import { samplePosts } from "./data/posts";
+import { useState } from "react";
+import { Post } from "./models/Post";
+import { getDistance } from "geolib";
+import { navigateToChat, navigateToProfile } from "./utility/navigation";
+import { MaterialIcons } from "@expo/vector-icons";
+import { commonStyles } from "@/styles/styles";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
-interface ListScreenProps {
-    setActiveScreen: React.Dispatch<React.SetStateAction<'map' | 'list'>>;
-}
+type Props = {
+    filter: 'all' | 'offer' | 'request';
+};
 
-const ListScreen: React.FC<ListScreenProps> = ({ setActiveScreen }) => {
-    const [filter, setFilter] = useState<'all' | 'offer' | 'request'>('all');
-    const [filterVisible, setFilterVisible] = useState(false);
-    const [location, setLocation] = useState<Location.LocationObject | null>(null);
+const ListScreen = ({ filter }: Props) => {
+
+    const userLat = 51.5;
+    const userLong = 6.55;
+
     const users = useUserStore((state) => state.users);
     const filteredPosts = samplePosts.filter((post) => {
         if (filter === 'all') return true;
         return post.type === filter;
     });
 
-    useEffect(() => {
-        (async () => {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Permission denied', 'Location permission is required.');
-                return;
-            }
-            const loc = await Location.getCurrentPositionAsync({});
-            setLocation(loc);
-        })();
-    }, []);
-
     const renderItem = ({ item }: { item: Post }) => {
         const distance =
             location
                 ? getDistance(
-                    { latitude: location.coords.latitude, longitude: location.coords.longitude },
+                    { latitude: userLat, longitude: userLong },
                     { latitude: item.location.latitude, longitude: item.location.longitude }
                 ) / 1000 // meters -> km
                 : null;
@@ -73,61 +61,10 @@ const ListScreen: React.FC<ListScreenProps> = ({ setActiveScreen }) => {
                 </View>
             </View>
         )
-    };
+    }
 
     return (
-        <SafeAreaView style={styles.container}>
-
-
-            {/* Search & Filter header */}
-            {/* Header */}
-            <View style={commonStyles.header}>
-                <Text style={commonStyles.headerTitle}>Linkfort</Text>
-            </View>
-            <View style={styles.banner}>
-                <TouchableOpacity style={styles.bannerButton} onPress={() => setActiveScreen("map")} >
-                    <Text style={{ color: "white" }}>Map View</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={styles.bannerButton}
-                    onPress={() => setFilterVisible(!filterVisible)}
-                >
-                    <Text style={{ color: "white" }}>Filter</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Dropdown overlay */}
-            {filterVisible && (
-                <View style={styles.dropdown}>
-                    <TouchableOpacity
-                        style={styles.dropdownOption}
-                        onPress={() => {
-                            setFilter('offer');
-                            setFilterVisible(false);
-                        }}>
-                        <Text>Offers</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.dropdownOption}
-                        onPress={() => {
-                            setFilter('request');
-                            setFilterVisible(false);
-                        }}>
-                        <Text>Requests</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.dropdownOption}
-                        onPress={() => {
-                            setFilter('all');
-                            setFilterVisible(false);
-                        }}>
-                        <Text>Show All</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
+        <View style={styles.container}>
 
             {/* List */}
             <FlatList
@@ -136,7 +73,7 @@ const ListScreen: React.FC<ListScreenProps> = ({ setActiveScreen }) => {
                 renderItem={renderItem}
                 contentContainerStyle={{
                     padding: 10,
-                    paddingBottom: 80
+                    // paddingBottom: 80
                 }}
             />
 
@@ -155,11 +92,9 @@ const ListScreen: React.FC<ListScreenProps> = ({ setActiveScreen }) => {
             </View>
 
 
-        </SafeAreaView>
-    );
-};
-
-export default ListScreen;
+        </View>
+    )
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -219,14 +154,6 @@ const styles = StyleSheet.create({
         color: "#666",
         marginBottom: 4,
     },
-    banner: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        padding: 10,
-        backgroundColor: "#f5f5f5",
-        borderBottomWidth: 1,
-        borderColor: "#ddd",
-    },
     bannerButton: {
         flexDirection: "row",
         alignItems: "center",
@@ -262,3 +189,5 @@ const styles = StyleSheet.create({
     },
 
 });
+
+export default ListScreen;

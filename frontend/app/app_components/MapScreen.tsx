@@ -1,161 +1,51 @@
-import { commonStyles } from '@/styles/styles';
-import * as Location from 'expo-location';
-import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Button, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import MapView, { Callout, Marker, Region } from 'react-native-maps';
-import { samplePosts } from '../app_components/data/posts';
-import { Post } from '../app_components/models/Post';
-import { navigateToChat, navigateToProfile } from './utility/navigation';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { getDistance } from 'geolib';
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useState } from 'react'
+import MapView, { Marker } from 'react-native-maps'
 import { useUserStore } from './store/users';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { SafeAreaView } from "react-native-safe-area-context";
+import { samplePosts } from './data/posts';
+import { Post } from './models/Post';
+import { getDistance } from 'geolib';
+import { navigateToChat, navigateToProfile } from './utility/navigation';
+import { commonStyles } from '@/styles/styles';
+import { MaterialIcons } from '@expo/vector-icons';
 
-interface MapScreenProps {
-    setActiveScreen: React.Dispatch<React.SetStateAction<'map' | 'list'>>;
-}
+const MapScreen = () => {
 
-const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
-    const [location, setLocation] = useState<Location.LocationObject | null>(null);
-    const [region, setRegion] = useState<Region | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-
-    const [posts, setPosts] = useState<Post[]>(samplePosts);
-
-    const [filter, setFilter] = useState<'all' | 'offer' | 'request'>('all');
-    const [filterVisible, setFilterVisible] = useState(false);
+    const userLat = 51.5;
+    const userLong = 6.55;
 
     const users = useUserStore((state) => state.users);
-
+    const [filter, setFilter] = useState<'all' | 'offer' | 'request'>('all');
+    const [filterVisible, setFilterVisible] = useState(false);
+    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
     const filteredPosts = samplePosts.filter((post) => {
         if (filter === 'all') return true;
         return post.type === filter;
     });
 
-    useEffect(() => {
-        (async () => {
-            // Ask for permission
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Permission denied', 'Location permission is required to show the map.');
-                setLoading(false);
-                return;
-            }
-
-            // Get current location
-            const loc = await Location.getCurrentPositionAsync({});
-            setLocation(loc);
-
-            // Set map region around current location
-            setRegion({
-                latitude: loc.coords.latitude,
-                longitude: loc.coords.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-            });
-
-            setLoading(false);
-        })();
-    }, []);
-
-    if (loading) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" />
-            </View>
-        );
-    }
-
-    if (!region) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" />
-            </View>
-        );
-    }
-
     const distance =
         selectedPost && location
             ? getDistance(
-                { latitude: location.coords.latitude, longitude: location.coords.longitude },
+                { latitude: userLat, longitude: userLong },
                 { latitude: selectedPost.location.latitude, longitude: selectedPost.location.longitude }
             ) / 1000
             : null;
 
     return (
-        <SafeAreaView style={styles.container}>
-            {/* Header */}
-            <View style={commonStyles.header}>
-                <Text style={commonStyles.headerTitle}>Linkfort</Text>
-            </View>
-
-            {/* banner */}
-            <View style={commonStyles.banner}>
-                <TouchableOpacity
-                    style={commonStyles.bannerButton}
-                    onPress={() => setActiveScreen("list")}
-                >
-                    <Text style={{ color: "white" }}>List View</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={commonStyles.bannerButton}
-                    onPress={() => setFilterVisible(!filterVisible)}
-                >
-                    <Text style={{ color: "white" }}>Filter</Text>
-                </TouchableOpacity>
-            </View>
-
-            {filterVisible && (
-                <View style={commonStyles.dropdown}>
-                    <TouchableOpacity
-                        style={commonStyles.dropdownOption}
-                        onPress={() => {
-                            setFilter('offer');
-                            setFilterVisible(false);
-                        }}>
-                        <Text>Offers</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={commonStyles.dropdownOption}
-                        onPress={() => {
-                            setFilter('request');
-                            setFilterVisible(false);
-                        }}>
-                        <Text>Requests</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={commonStyles.dropdownOption}
-                        onPress={() => {
-                            setFilter('all');
-                            setFilterVisible(false);
-                        }}>
-                        <Text>Show All</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
-
-            {/* map */}
+        <View style={styles.map}>
             <MapView
                 style={styles.map}
-                region={region}
-            //  showsUserLocation 
-            //followsUserLocation
+                initialRegion={{
+                    latitude: userLat,
+                    longitude: userLong,
+                    latitudeDelta: 0.15,
+                    longitudeDelta: 0.15,
+                }}
             >
-                {location && (
-                    <Marker
-                        coordinate={{
-                            latitude: location.coords.latitude,
-                            longitude: location.coords.longitude,
-                        }}
-                        title="You are here"
-                    />
-                )}
+                <Marker
+                    coordinate={{ latitude: 51.498, longitude: 6.54 }}
+                    title="Offer nearby"
+                />
 
                 {filteredPosts.map((post) => (
                     <Marker
@@ -172,8 +62,8 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
                         }
                     />
                 ))}
-            </MapView>
 
+            </MapView>
             {/* Modal to show marker info */}
             {selectedPost && (
                 <Modal
@@ -217,27 +107,15 @@ const MapScreen: React.FC<MapScreenProps> = ({ setActiveScreen }) => {
                     </View>
                 </Modal>
             )}
-            <View style={styles.buttonContainer2}>
-                <TouchableOpacity onPress={() => router.push('/create_post')}
-                    style={{
-                        backgroundColor: "#007AFF",
-                        paddingVertical: 10,
-                        paddingHorizontal: 16,
-                        borderRadius: 8,
-                    }}
-                >
-                    <Text style={{ color: "white", fontSize: 24 }}>+</Text>
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
-    );
-};
+        </View>
 
-export default MapScreen;
+    )
+}
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
-    map: { flex: 1 },
+    map: {
+        flex: 1,
+    },
     loadingContainer: {
         flex: 1,
         alignItems: 'center',
@@ -306,4 +184,6 @@ const styles = StyleSheet.create({
         color: "#666",
         marginBottom: 4,
     },
-});
+})
+
+export default MapScreen;
