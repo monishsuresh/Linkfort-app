@@ -119,10 +119,10 @@ export default function HomeScreen() {
 
       {/* Content */}
       {viewMode === "map" ? (
-        <MapScreen />
-        // <View>
-        //   <Text style={styles.filterText}>map screen</Text>
-        // </View>
+        // <MapScreen />
+        <View>
+          <Text style={styles.filterText}>map screen</Text>
+        </View>
       ) : (
         <ListScreen filter={filter} />
         // <View>

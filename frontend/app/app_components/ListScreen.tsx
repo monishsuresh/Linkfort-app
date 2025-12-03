@@ -27,7 +27,7 @@ const ListScreen = ({ filter }: Props) => {
 
     const renderItem = ({ item }: { item: Post }) => {
         const distance =
-            location
+            item.location
                 ? getDistance(
                     { latitude: userLat, longitude: userLong },
                     { latitude: item.location.latitude, longitude: item.location.longitude }
