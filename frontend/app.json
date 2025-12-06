@@ -13,6 +13,9 @@
       "bundleIdentifier": "com.monish2.linkfort",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyCb_y8Lf-lC3vKNzXbYGHf3poCt_IeAPWk"
       }
     },
     "android": {
