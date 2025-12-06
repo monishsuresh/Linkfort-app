@@ -28,7 +28,7 @@ const MapScreen = ({ filter }: Props) => {
     });
 
     const distance =
-        selectedPost && location
+        selectedPost
             ? getDistance(
                 { latitude: userLat, longitude: userLong },
                 { latitude: selectedPost.location.latitude, longitude: selectedPost.location.longitude }
