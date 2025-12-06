@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.monish2.linkfort",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -53,8 +57,11 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "baeae940-8465-47b4-8300-425a09ef7143"
+        "projectId": "ca40d1f4-29d3-4156-a0e9-2aadfa7b338a"
       }
+    },
+    "cli": {
+      "appVersionSource": "remote"
     }
   }
 }
