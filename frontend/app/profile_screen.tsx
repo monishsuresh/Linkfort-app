@@ -22,6 +22,8 @@ import { renderStars } from "./app_components/utility/stars";
 import { profileStyles } from "@/styles/profilestyles";
 import { commonStyles } from "@/styles/styles";
 import { ratingStyles } from "@/styles/ratingStyles";
+import { useReviewStore } from "./app_components/store/reviewStore";
+import { Review } from "./app_components/models/Review";
 
 /**
  * Profile Screen (Expo Router)
@@ -51,6 +53,15 @@ export default function Profile() {
     const [showRateBox, setShowRateBox] = useState(false);
     const [selectedStars, setSelectedStars] = useState(0);
     const [reviewText, setReviewText] = useState("");
+
+    const addReview = useReviewStore((state) => state.addReview);
+    const reviewList = useReviewStore((state) => state.reviewList);
+    const userReviews = reviewList.filter((review) => review.reviewee === user!.id);
+
+    const reviews = [
+        { id: 1, text: "Very friendly and on time!", rating: 5 },
+        { id: 2, text: "Easy exchange, recommended.", rating: 4 },
+    ];
 
     // ---------------- Render ----------------
     return (
@@ -116,9 +127,12 @@ export default function Profile() {
                     </View>
 
                     <View style={profileStyles.starsRow}>
-                        <Text style={profileStyles.stars}>
-                            {user!.rating?.toFixed(1)} {renderStars(user!.rating ?? 0)}
-                        </Text>
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <Text style={{ fontSize: 20, fontWeight: "600", marginRight: 4 }}>
+                                {user!.rating?.toFixed(1)}
+                            </Text>
+                            <Ionicons name="star" size={20} color="#f5b50a" />
+                        </View>
                     </View>
                 </View>
 
@@ -147,6 +161,39 @@ export default function Profile() {
                     </>
                 )}
 
+                {/* Reviews Section */}
+                {userReviews.length > 0 && (
+                    <View style={{ marginTop: 30 }}>
+                        <Text style={profileStyles.sectionTitle}>Reviews</Text>
+
+                        {userReviews.map((review) => (
+                            <View
+                                key={review.id}
+                                style={{
+                                    backgroundColor: "#fff",
+                                    padding: 14,
+                                    borderRadius: 12,
+                                    marginBottom: 12,
+                                    borderWidth: 1,
+                                    borderColor: "#eee",
+                                }}
+                            >
+                                {/* Star rating */}
+                                <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 6 }}>
+                                    <Text style={{ fontSize: 14, fontWeight: "600", marginRight: 4 }}>
+                                        {review.rating.toFixed(1)}
+                                    </Text>
+                                    <Ionicons name="star" size={14} color="#f5b50a" />
+                                </View>
+
+                                {/* Review text */}
+                                <Text style={{ fontSize: 15, color: "#333" }}>
+                                    {review.review_text}
+                                </Text>
+                            </View>
+                        ))}
+                    </View>
+                )}
 
                 {/* Spacer so floating Add button doesn't cover content */}
                 <View style={{ height: 120 }} />
@@ -225,12 +272,26 @@ export default function Profile() {
                                             ]}
                                             disabled={selectedStars === 0}
                                             onPress={() => {
-                                                console.log("User rated:", selectedStars);
-                                                console.log("Review text:", reviewText);
+                                                // Only add to store if review text is not empty
+                                                if (reviewText.trim().length > 0) {
+                                                    const newReview: Review = {
+                                                        id: Date.now().toString(),
+                                                        review_text: reviewText.trim(),
+                                                        reviewee: user!.id,
+                                                        rating: selectedStars,
+                                                    };
+
+                                                    addReview(newReview);
+                                                    console.log("Stored review:", newReview);
+                                                }
+
                                                 setUserRatingPossible(user!.id, false);
                                                 setShowRateBox(false);
                                                 setSelectedStars(0);
-                                                setReviewText(""); // reset the input
+                                                setReviewText("");
+
+                                                console.log("User rated:", selectedStars);
+                                                console.log("Review text:", reviewText);
                                             }}
                                         >
                                             <Text style={ratingStyles.submitText}>Submit</Text>

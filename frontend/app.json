@@ -9,7 +9,10 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "process.env.AIzaSyCb_y8Lf-lC3vKNzXbYGHf3poCt_IeAPWk"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -24,11 +27,16 @@
       "softwareKeyboardLayoutMode": "resize",
       "permissions": [
         "INTERNET"
-      ]
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "process.env.AIzaSyCb_y8Lf-lC3vKNzXbYGHf3poCt_IeAPWk"
+        }
+      }
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icon.png"
     },
     "plugins": [
       "expo-router",
