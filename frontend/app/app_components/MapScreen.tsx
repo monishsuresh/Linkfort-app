@@ -1,6 +1,6 @@
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import MapView, { Marker } from 'react-native-maps'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { useUserStore } from './store/users';
 import { samplePosts } from './data/posts';
 import { Post } from './models/Post';
@@ -8,14 +8,19 @@ import { getDistance } from 'geolib';
 import { navigateToChat, navigateToProfile } from './utility/navigation';
 import { commonStyles } from '@/styles/styles';
 import { MaterialIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
-const MapScreen = () => {
+type Props = {
+    filter: 'all' | 'offer' | 'request';
+};
+
+const MapScreen = ({ filter }: Props) => {
 
     const userLat = 51.5;
     const userLong = 6.55;
 
     const users = useUserStore((state) => state.users);
-    const [filter, setFilter] = useState<'all' | 'offer' | 'request'>('all');
+    // const [filter, setFilter] = useState<'all' | 'offer' | 'request'>('all');
     const [filterVisible, setFilterVisible] = useState(false);
     const [selectedPost, setSelectedPost] = useState<Post | null>(null);
     const filteredPosts = samplePosts.filter((post) => {
@@ -24,7 +29,7 @@ const MapScreen = () => {
     });
 
     const distance =
-        selectedPost && location
+        selectedPost
             ? getDistance(
                 { latitude: userLat, longitude: userLong },
                 { latitude: selectedPost.location.latitude, longitude: selectedPost.location.longitude }
@@ -34,6 +39,7 @@ const MapScreen = () => {
     return (
         <View style={styles.map}>
             <MapView
+                provider={PROVIDER_GOOGLE}
                 style={styles.map}
                 initialRegion={{
                     latitude: userLat,
@@ -44,7 +50,7 @@ const MapScreen = () => {
             >
                 <Marker
                     coordinate={{ latitude: 51.498, longitude: 6.54 }}
-                    title="Offer nearby"
+                    title="You are here"
                 />
 
                 {filteredPosts.map((post) => (
@@ -107,6 +113,20 @@ const MapScreen = () => {
                     </View>
                 </Modal>
             )}
+
+            {/* post button */}
+            <View style={styles.buttonContainer2}>
+                <TouchableOpacity onPress={() => router.push('/create_post')}
+                    style={{
+                        backgroundColor: "#007AFF",
+                        paddingVertical: 10,
+                        paddingHorizontal: 16,
+                        borderRadius: 8,
+                    }}
+                >
+                    <Text style={{ color: "white", fontSize: 24 }}>+</Text>
+                </TouchableOpacity>
+            </View>
         </View>
 
     )
