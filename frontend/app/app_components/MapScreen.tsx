@@ -8,6 +8,7 @@ import { getDistance } from 'geolib';
 import { navigateToChat, navigateToProfile } from './utility/navigation';
 import { commonStyles } from '@/styles/styles';
 import { MaterialIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 type Props = {
     filter: 'all' | 'offer' | 'request';
@@ -112,6 +113,20 @@ const MapScreen = ({ filter }: Props) => {
                     </View>
                 </Modal>
             )}
+
+            {/* post button */}
+            <View style={styles.buttonContainer2}>
+                <TouchableOpacity onPress={() => router.push('/create_post')}
+                    style={{
+                        backgroundColor: "#007AFF",
+                        paddingVertical: 10,
+                        paddingHorizontal: 16,
+                        borderRadius: 8,
+                    }}
+                >
+                    <Text style={{ color: "white", fontSize: 24 }}>+</Text>
+                </TouchableOpacity>
+            </View>
         </View>
 
     )
