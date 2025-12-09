@@ -93,6 +93,9 @@ const MapScreen = ({ filter }: Props) => {
                                     by {users.find((u) => u.id === selectedPost.userId)?.name}
                                 </Text>
                             </TouchableOpacity>
+                            <Text style={commonStyles.type}>
+                                {selectedPost.type === "offer" ? "🔵 Offer" : "🟢 Request"}
+                            </Text>
                             <Text style={styles.postDescription}>{selectedPost.details}</Text>
                             <TouchableOpacity
                                 style={styles.contactButton}
@@ -113,6 +116,18 @@ const MapScreen = ({ filter }: Props) => {
                     </View>
                 </Modal>
             )}
+
+            {/* Legend */}
+            <View style={styles.legend}>
+                <View style={styles.row}>
+                    <View style={[styles.dot, { backgroundColor: 'blue' }]} />
+                    <Text>Offers</Text>
+                </View>
+                <View style={styles.row}>
+                    <View style={[styles.dot, { backgroundColor: '#11f724ff' }]} />
+                    <Text>Requests</Text>
+                </View>
+            </View>
 
             {/* post button */}
             <View style={styles.buttonContainer2}>
@@ -203,6 +218,26 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#666",
         marginBottom: 4,
+    },
+    legend: {
+        position: 'absolute',
+        bottom: 20,
+        left: 20,
+        backgroundColor: 'white',
+        padding: 10,
+        borderRadius: 8,
+        elevation: 4,
+    },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 6,
+    },
+    dot: {
+        width: 14,
+        height: 14,
+        borderRadius: 7,
+        marginRight: 8,
     },
 })
 
