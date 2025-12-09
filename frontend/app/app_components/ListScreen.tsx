@@ -50,7 +50,7 @@ const ListScreen = ({ filter }: Props) => {
                     </Text>
                 </TouchableOpacity>
                 <Text style={styles.type}>
-                    {item.type === "offer" ? "🟢 Offer" : "🔵 Request"}
+                    {item.type === "offer" ? "🔵 Offer" : "🟢 Request"}
                 </Text>
                 <Text style={styles.details}>{item.details}</Text>
                 <View style={styles.contactButton}>

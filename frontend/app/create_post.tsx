@@ -1,7 +1,7 @@
 import { Picker } from "@react-native-picker/picker"; // install if not installed
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Modal, Pressable, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { addPost } from "./app_components/data/posts";
 import { Post, PostType } from "./app_components/models/Post";
 
@@ -14,6 +14,7 @@ export default function CreatePost() {
     const [shareLocation, setShareLocation] = useState(false);
     const isFormValid = title.trim().length > 0 && description.trim().length > 0;
     const [message, setMessage] = useState('');
+    const [infoVisible, setInfoVisible] = useState(false);
 
     const handleSubmit = () => {
         const newPost: Post = {
@@ -87,12 +88,43 @@ export default function CreatePost() {
 
             {/* Share Location */}
             <View style={styles.toggleRow}>
-                <Text style={styles.label}>Share Location</Text>
+                <TouchableOpacity onPress={() => setInfoVisible(true)}>
+                    <Text style={[styles.label, { textDecorationLine: "underline" }]}>
+                        Share Location
+                    </Text>
+                </TouchableOpacity>
+
                 <Switch
                     value={shareLocation}
                     onValueChange={setShareLocation}
                 />
             </View>
+
+            {/* Info Dialog */}
+            <Modal
+                transparent
+                visible={infoVisible}
+                animationType="fade"
+                onRequestClose={() => setInfoVisible(false)}
+            >
+                <Pressable style={styles.infoBackdrop} onPress={() => setInfoVisible(false)}>
+                    <Pressable style={styles.infoBox} onPress={e => e.stopPropagation()}>
+                        <Text style={styles.infoTitle}>About Location Sharing</Text>
+
+                        <Text style={styles.infoText}>
+                            Enabling this lets other users see your approximate location
+                            so they can find nearby offers and requests.
+                        </Text>
+
+                        <TouchableOpacity
+                            style={styles.infoCloseButton}
+                            onPress={() => setInfoVisible(false)}
+                        >
+                            <Text style={styles.infoCloseButtonText}>OK</Text>
+                        </TouchableOpacity>
+                    </Pressable>
+                </Pressable>
+            </Modal>
 
             <TouchableOpacity
                 style={[
@@ -163,5 +195,39 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         marginTop: 10,
-    }
+    },
+    infoBackdrop: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.4)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    infoBox: {
+        width: "80%",
+        backgroundColor: "white",
+        borderRadius: 12,
+        padding: 20,
+        elevation: 5,
+    },
+    infoTitle: {
+        fontSize: 18,
+        fontWeight: "600",
+        marginBottom: 10,
+    },
+    infoText: {
+        fontSize: 15,
+        color: "#444",
+    },
+    infoCloseButton: {
+        marginTop: 20,
+        alignSelf: "flex-end",
+        backgroundColor: "#007AFF",
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 8,
+    },
+    infoCloseButtonText: {
+        color: "white",
+        fontWeight: "600",
+    },
 });

@@ -6,6 +6,15 @@ export const commonStyles = StyleSheet.create({
         backgroundColor: "#f5f5f5",
         paddingTop: 20,
     },
+    backdrop: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'transparent', // or 'rgba(0,0,0,0.1)' if you want dimming
+        zIndex: 1,
+    },
     banner: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -117,6 +126,11 @@ export const commonStyles = StyleSheet.create({
     trustHeader: { flexDirection: "row", alignItems: "center" },
     trustTitle: { marginLeft: 8, fontWeight: "700" },
     trustStats: { flexDirection: "row", justifyContent: "space-between", marginTop: 12 },
+    type: {
+        fontSize: 14,
+        fontWeight: "500",
+        marginTop: 4,
+    },
     statBlock: { alignItems: "center", flex: 1 },
     statNumber: { fontSize: 28, fontWeight: "900", color: "#4F46E5" },
     statLabel: { color: "#6B7280" },

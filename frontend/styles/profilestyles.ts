@@ -14,8 +14,35 @@ export const profileStyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
     },
+
+    header2: {
+        height: 60,
+        backgroundColor: "#fff",
+        borderBottomWidth: 1,
+        borderColor: "#eee",
+        paddingHorizontal: 16,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        position: "relative",
+    },
+
     iconButton: { padding: 6 },
+    backButton: {
+        position: "absolute",
+        left: 16,
+        padding: 8,       // improves touch area
+    },
+
     headerTitle: { fontSize: 18, fontWeight: "700" },
+    headerTitle2: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        textAlign: "center",
+        fontSize: 20,
+        fontWeight: "600",
+    },
 
     profileArea: {
         alignItems: "center",

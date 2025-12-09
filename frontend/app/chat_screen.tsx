@@ -210,6 +210,10 @@ export default function Example() {
                             primaryStyle={{ alignItems: 'center' }}
                         />
                     )}
+                    textInputProps={{
+                        style: { color: 'white' },           // ← input text color
+                        placeholderTextColor: '#ccc',        // ← optional
+                    }}
                     renderAvatar={props => null}
                     keyboardAvoidingViewProps={{ keyboardVerticalOffset }}
                     listProps={{

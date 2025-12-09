@@ -5,15 +5,17 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MapScreen from "../app_components/MapScreen";
 import ListScreen from "../app_components/ListScreen";
+import { commonStyles } from "@/styles/styles";
 
 export default function HomeScreen() {
-  const [viewMode, setViewMode] = useState<"list" | "map">("map");
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
   const [filter, setFilter] = useState<'all' | 'offer' | 'request'>('all');
   const [filterVisible, setFilterVisible] = useState(false);
@@ -23,7 +25,6 @@ export default function HomeScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Ionicons name="chevron-back" size={22} />
           <Text style={styles.headerTitle}>Linkfort</Text>
         </View>
       </View>
@@ -87,34 +88,42 @@ export default function HomeScreen() {
 
       {/* Dropdown overlay */}
       {filterVisible && (
-        <View style={styles.dropdown}>
-          <TouchableOpacity
-            style={styles.dropdownOption}
-            onPress={() => {
-              setFilter('offer');
-              setFilterVisible(false);
-            }}>
-            <Text>Offers</Text>
-          </TouchableOpacity>
+        <>
+          {/* BACKDROP - tap here to close */}
+          <TouchableWithoutFeedback onPress={() => setFilterVisible(false)}>
+            <View style={commonStyles.backdrop} />
+          </TouchableWithoutFeedback>
 
-          <TouchableOpacity
-            style={styles.dropdownOption}
-            onPress={() => {
-              setFilter('request');
-              setFilterVisible(false);
-            }}>
-            <Text>Requests</Text>
-          </TouchableOpacity>
+          {/* DROPDOWN */}
+          <View style={styles.dropdown}>
+            <TouchableOpacity
+              style={styles.dropdownOption}
+              onPress={() => {
+                setFilter('offer');
+                setFilterVisible(false);
+              }}>
+              <Text>Offers</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.dropdownOption}
-            onPress={() => {
-              setFilter('all');
-              setFilterVisible(false);
-            }}>
-            <Text>Show All</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              style={styles.dropdownOption}
+              onPress={() => {
+                setFilter('request');
+                setFilterVisible(false);
+              }}>
+              <Text>Requests</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.dropdownOption}
+              onPress={() => {
+                setFilter('all');
+                setFilterVisible(false);
+              }}>
+              <Text>Show All</Text>
+            </TouchableOpacity>
+          </View>
+        </>
       )}
 
       {/* Content */}
