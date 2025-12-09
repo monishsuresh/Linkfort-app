@@ -68,14 +68,12 @@ export default function Profile() {
         <SafeAreaView style={profileStyles.safe}>
             <ScrollView contentContainerStyle={profileStyles.scrollContent} showsVerticalScrollIndicator={false}>
                 {/* Header */}
-                <View style={profileStyles.header}>
+                <View style={profileStyles.header2}>
+                    <Text style={profileStyles.headerTitle2}>Profile</Text>
                     <TouchableOpacity onPress={() => router.back()} style={profileStyles.iconButton}>
                         <Ionicons name="chevron-back" size={26} color="#111" />
                     </TouchableOpacity>
-                    <Text style={profileStyles.headerTitle}>Profile</Text>
-                    <TouchableOpacity style={profileStyles.iconButton}>
-                        <Ionicons name="settings-outline" size={24} color="#111" />
-                    </TouchableOpacity>
+
                 </View>
 
                 {/* Profile area */}
