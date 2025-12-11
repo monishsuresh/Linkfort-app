@@ -127,7 +127,7 @@ export default function Alerts() {
     <SafeAreaView style={styles.safe}>
       {/* Top header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Alerts</Text>
+        <Text style={styles.headerTitle}>Updates</Text>
         <Ionicons name="checkmark-done-outline" size={22} color="#111" />
       </View>
 
